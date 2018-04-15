@@ -17,14 +17,15 @@
             a(@click="() => deleteList(listIndex)" style="color: red;" )
               icon(name="times-circle")
           .tile.is-child.is-vertical.box(
-            style="max-height: 150px; min-height: 120px;"
+            style="max-height: 150px; min-height: 120px; "
             v-for="(item, itemIndex) in list.todos"
             draggable="true"
             @dragstart="() => setSourceIndex(itemIndex, listIndex)"
             @dragover="() => setTargetIndex(itemIndex, listIndex)"
             @dragend="onDragEnd"
+
           )
-            div 
+            div(:style="item.priority")
               .level(v-if="itemIndex!==editingItem || listIndex!==editingList")
                 div.level-left
                   .level-item.subtitle {{item.name}}
@@ -40,7 +41,14 @@
                   input.input(placeholder="Name" v-model="todoName" )
                 .field
                   input.input(placeholder="Content" v-model="todoContent" )
-
+                .field
+                  input(type="radio" name="priority" v-model="priority" value="low" )
+                  | Low
+                  input(type="radio" name="priority" v-model="priority" value="medium" )
+                  | Medium
+                  input(type="radio" name="priority" v-model="priority" value="high" )
+                  | High
+                  
                 input.button(type="submit" @click="(ev) => submitEditTodo(ev,listIndex, itemIndex)" ) 
           .tile.is-child.is-vetical.box(
             style=" min-height: 120px;"
@@ -51,28 +59,34 @@
                 input.input(placeholder="Name" v-model="todoName" )
               .field
                 input.input(placeholder="Content" v-model="todoContent" )
-
-                input.button(type="submit" @click="submitAddTodo" ) 
+              .field
+                input(type="radio" name="priority" v-model="priority" value="low" )
+                | Low
+                input(type="radio" name="priority" v-model="priority" value="medium" )
+                | Medium
+                input(type="radio" name="priority" v-model="priority" value="high" )
+                | High
+                input.button.is-hidden(type="submit" @click="submitAddTodo" ) 
 </template>
 
 <script>
 import Icon from "vue-awesome";
 import { getBoards } from "../services";
-import {mapState} from 'vuex';
+import { mapState } from "vuex";
 export default {
   components: {
     Icon
   },
   computed: {
-    ...mapState(['storedLists'])
+    ...mapState(["storedLists"])
   },
   watch: {
     lists(val) {
-      console.log('classic list changed');
-      this.$store.commit('setLists', val);
+      console.log("classic list changed");
+      this.$store.commit("setLists", val);
     },
     storedLists(val) {
-      console.log('stored lists changed');
+      console.log("stored lists changed");
       this.lists = val;
     }
   },
@@ -88,8 +102,8 @@ export default {
       this.lists[this.editingListName].name = this.listName;
       this.editingListName = false;
       this.lists = [...this.lists];
-    } ,
-    deleteTodo(listIndex, itemIndex){
+    },
+    deleteTodo(listIndex, itemIndex) {
       let list = [...this.lists[listIndex].todos];
       console.log(list);
       list.splice(itemIndex, 1);
@@ -108,7 +122,7 @@ export default {
     },
     submitEditTodo(ev, listIndex, itemIndex) {
       ev.preventDefault();
-      if(this.todoName==='' && this.todoContent === ''){
+      if (this.todoName === "" && this.todoContent === "") {
         this.editingList = false;
         this.editingItem = false;
         return;
@@ -122,25 +136,49 @@ export default {
       this.editingList = false;
       this.editingItem = false;
     },
+    getColorProperty(priority) {
+      
+    },
     submitAddTodo(ev) {
-      console.log('¿rsmda')
       ev.preventDefault();
-      if(this.todoName == '' && this.todoContent == '' ){
-        this.isAdding=false;
+      if (this.todoName == "" && this.todoContent == "") {
+        this.isAdding = false;
         return;
+      }
+      for (let i = 0; i < this.lists[this.isAdding].todos.length; i++) {
+        if (this.lists[this.isAdding].todos[i].name === this.todoName) {
+          alert("Duplicated name");
+          return;
+        }
+      }
+      let bgColor;
+      switch (this.priority) {
+        case "low":
+          bgColor = "background-color: green";
+          break;
+        case "medium":
+          bgColor = "background-color: yellow";
+          break;
+        case "high":
+          bgColor = "background-color: red";
+          break;
+        default:
+          bgColor = "background-color: green";
       }
       const newTodo = {
         name: this.todoName,
-        content: this.todoContent
-      }
+        content: this.todoContent,
+        priority: bgColor
+      };
+
       this.lists[this.isAdding].todos.push(newTodo);
       this.lists = [...this.lists];
-      
-      this.isAdding=false;
-      this.todoName = '';
-      this.todoContent = '';
+
+      this.isAdding = false;
+      this.todoName = "";
+      this.todoContent = "";
     },
-    async getBoards(){
+    async getBoards() {
       const data = await getBoards(this.$store.token);
     },
     onDragEnd() {
@@ -153,7 +191,7 @@ export default {
         0,
         object
       );
-      this.lists = [...this.lists];      
+      this.lists = [...this.lists];
       this.sourceItemIndex = null;
       this.sourceListIndex = null;
       this.targetItemIndex = null;
@@ -172,35 +210,19 @@ export default {
   data() {
     return {
       name: "this is personal",
-      todoName:'',
-      todoContent:'',
+      todoName: "",
+      todoContent: "",
       editingList: false,
       editingListName: false,
       editingItem: false,
-      listName: '',
+      listName: "",
       isAdding: false,
       sourceItemIndex: null,
       sourceListIndex: null,
       targetItemIndex: null,
       targetListIndex: null,
-      lists: [
-        {
-          name: "arreglo 1",
-          todos: [
-            { content: '', name: "jaun", id: 1 },
-            { content: '', name: "carlos", id: 2 },
-            { content: '', name: "ivan", id: 3 }
-          ]
-        },
-        {
-          name: "arreglo 2",
-          todos: [
-            { content: '', name: "franco", id: 4 },
-            { content: '', name: "checo", id: 5 },
-            { content: '', name: "christian", id: 6 }
-          ]
-        }
-      ]
+      priority: "",
+      lists: []
     };
   }
 };

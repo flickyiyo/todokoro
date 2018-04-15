@@ -1,6 +1,6 @@
 <template lang="pug">
   .column.auto
-    h1.title Titulo 
+    h1.title To do list 
       a(@click="upd")
         icon(name="plus")
 </template>
