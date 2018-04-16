@@ -1,25 +1,25 @@
-<template>
-  <div 
-    draggable="true" 
-    class="tile is-child is-vertical is-box"
-    @dragstart="dragStart"
-    @dragover="dragover"
-    style="background-color: red;"
-  >
-    <div :class="item.priority" >
-      <div 
-        v-if="isEditing"
-        class="level"
-      >
-      <item-form v-if="editingItem" />
+<template lang="pug">
+  .tile.is-child.is-vertical.is-box(draggable='true', @dragstart='dragStart', @dragover='dragover', style='background-color: red;')
+  div(:class='item.priority')
+    .level(v-if='isEditing')
+      item-form(v-if='editingItem===itemIndex && \
+      editingList===listIndex', @hideform='hideForm'  )
+        div
+          .level(v-if='editingItem!==itemIndex || \
+          listIndex!==editingList')
+            .level-left
+              .leve-item.subtitle {{item.name}}
+              .level-right
+                a(@click='editTodo')
+                  icon(name='edit')
+                a(@click='deleteTodo', style='color: red')
+                  icon(name='times-circle')
 
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
 import ItemForm from "./ItemForm";
+import Icon from "vue-awesome";
 export default {
   components: {
     ItemForm
@@ -27,10 +27,14 @@ export default {
   data() {
     return {
       editingItem: undefined
-    }
+    };
   },
   props: {
     itemIndex: {
+      required: true,
+      type: Number
+    },
+    listIndex: {
       required: true,
       type: Number
     },
@@ -46,6 +50,18 @@ export default {
     },
     dragOver() {
       this.$emit("setTargetIndex", this.itemIndex);
+    },
+    deleteTodo() {
+      this.$emit("deleteTodo");
+    },
+    addTodo(todo) {
+      this.$store.commit("hideNewItemForm");
+    },
+    setEditingItemAndList() {
+      this.store.commit('setEditingItemAndList', {
+        editingItem: this.itemIndex,
+        editingList: this.listIndex
+      });
     }
   }
 };
