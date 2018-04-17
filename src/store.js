@@ -7,9 +7,13 @@ const store = new Vuex.Store({
   state: {
     editingItem: undefined,
     editingList: undefined,
-    storedLists: [],
+    lists: [],
   },
   mutations: {
+    changeListName(state, payload) {
+      const { listIndex, listName } = payload;
+      state.lists[listIndex].name = listName;
+    },
     hideNewItemForm(state) {
       state.editingItem = undefined;
       state.editingList = undefined;
@@ -23,16 +27,16 @@ const store = new Vuex.Store({
       state.userId = payload.userId;
     },
     addList(state, list) {
-      state.storedLists.push({
+      state.lists.push({
         name: 'New One',
-        todos:[]
+        todos: []
       });
     },
     addTodo(state, payload) {
-      state.storedLists[payload.listIndex].todos.push(payload.todo);
+      state.lists[payload.listIndex].todos.push(payload.todo);
     },
     setLists(state, lists) {
-      state.storedLists = lists;
+      state.lists = lists;
     }
   },
   plugins: [createPersistedState()]

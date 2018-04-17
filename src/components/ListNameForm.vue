@@ -1,21 +1,40 @@
 <template lang="pug" >
-div
-  .level-left
-    .level-item.subtitle {{name}}
-  p {{content}}
+  form(@submit="submitListName")
+    .field
+      input.input(placeholder="List Name")
+    input(type="submit" hidden)
+    
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
+
 export default {
   props: {
-    name: {
-      type: String
-    },
-    content: {
-      type: String
+    defaultListName: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      listName: ""
+    };
+  },
+  computed: {
+    ...mapState(["lists"])
+  },
+  methods: {
+    submitListName(ev) {
+      ev.preventDefault();
+      if (!this.lists.find(list => this.listName === list.name)) {
+        this.$emit('submitListName', this.listName);
+        return;
+      }
+      alert('List Already in board');
     }
   }
-}
+};
 </script>
 
 <style>
