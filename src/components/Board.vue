@@ -1,81 +1,21 @@
 <template lang="pug" >
   .tile.is-ancestor(style="overflow-x: scroll; padding:10px;")
-    .tile.is-4(v-for="(list, listIndex) in lists")
-      .tile
-        .tile.is-vertical.is-parent.box(
-          style="margin-left: 15px;"
-          @dragover="targetListIndex=listIndex"
-        )
-          form(@submit="changeListName")
-            input.input(v-if="editingListName===listIndex" v-model="listName" )
-            input(type="submit" hidden)
-          p.title(v-if="editingListName!==listIndex") {{ list.name }} 
-            a(@click="() => addTodo(listIndex)")
-              icon(name="plus")
-            a(@click="() => editingListName=listIndex")
-              icon(name="edit")
-            a(@click="() => deleteList(listIndex)" style="color: red;" )
-              icon(name="times-circle")
-          .tile.is-child.is-vertical.box(
-            style="max-height: 150px; min-height: 120px; "
-            v-for="(item, itemIndex) in list.todos"
-            draggable="true"
-            @dragstart="() => setSourceIndex(itemIndex, listIndex)"
-            @dragover="() => setTargetIndex(itemIndex, listIndex)"
-            @dragend="onDragEnd"
+    list-container
 
-          )
-            div(:style="item.priority")
-              .level(v-if="itemIndex!==editingItem || listIndex!==editingList")
-                div.level-left
-                  .level-item.subtitle {{item.name}}
-                a.level-right(style="color: red")
-                  a(@click="() => editTodo(listIndex, itemIndex)")
-                    icon(name="edit")
-                  a(@click="() => deleteTodo(listIndex, itemIndex)" style="color: red")
-                    icon(name="times-circle")
-              p {{item.content}}
-            div(v-if="itemIndex===editingItem && listIndex===editingList")
-              form(@submit="(ev) => submitEditTodo(ev, listIndex, itemIndex)")
-                .field
-                  input.input(placeholder="Name" v-model="todoName" )
-                .field
-                  input.input(placeholder="Content" v-model="todoContent" )
-                .field
-                  input(type="radio" name="priority" v-model="priority" value="low" )
-                  | Low
-                  input(type="radio" name="priority" v-model="priority" value="medium" )
-                  | Medium
-                  input(type="radio" name="priority" v-model="priority" value="high" )
-                  | High
-                  
-                input.button(type="submit" @click="(ev) => submitEditTodo(ev,listIndex, itemIndex)" ) 
-          .tile.is-child.is-vetical.box(
-            style=" min-height: 120px;"
-            v-if="isAdding===listIndex"
-          )
-            form(@submit="submitAddTodo")
-              .field
-                input.input(placeholder="Name" v-model="todoName" )
-              .field
-                input.input(placeholder="Content" v-model="todoContent" )
-              .field
-                input(type="radio" name="priority" v-model="priority" value="low" )
-                | Low
-                input(type="radio" name="priority" v-model="priority" value="medium" )
-                | Medium
-                input(type="radio" name="priority" v-model="priority" value="high" )
-                | High
-                input.button.is-hidden(type="submit" @click="submitAddTodo" ) 
+
 </template>
 
 <script>
 import Icon from "vue-awesome";
 import { getBoards } from "../services";
 import { mapState } from "vuex";
+import ListNameForm from "./ListNameForm";
+import ListContainer from "./ListContainer";
 export default {
   components: {
-    Icon
+    Icon,
+    ListNameForm,
+    ListContainer
   },
   computed: {
     ...mapState(["storedLists"])
@@ -136,9 +76,7 @@ export default {
       this.editingList = false;
       this.editingItem = false;
     },
-    getColorProperty(priority) {
-      
-    },
+    getColorProperty(priority) {},
     submitAddTodo(ev) {
       ev.preventDefault();
       if (this.todoName == "" && this.todoContent == "") {

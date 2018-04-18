@@ -1,7 +1,7 @@
 <template lang="pug" >
   form(@submit="submitListName")
     .field
-      input.input(placeholder="List Name")
+      input.input(v-model="listName" placeholder="List Name")
     input(type="submit" hidden)
     
 </template>
@@ -14,6 +14,9 @@ export default {
     defaultListName: {
       type: String,
       required: true
+    },
+    list: {
+      required: false,
     }
   },
   data() {
@@ -24,11 +27,14 @@ export default {
   computed: {
     ...mapState(["lists"])
   },
+  mounted(){
+    this.listName = this.list.name || '';
+  },
   methods: {
     submitListName(ev) {
       ev.preventDefault();
       if (!this.lists.find(list => this.listName === list.name)) {
-        this.$emit('submitListName', this.listName);
+        this.$emit('submit', this.listName);
         return;
       }
       alert('List Already in board');

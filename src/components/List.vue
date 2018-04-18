@@ -1,34 +1,34 @@
-<template lang="pug">
-.tile.is-4(v-for="(list, listIndex) in lists")
+<template lang="pug" >
   .tile.is-vertical.is-parent.box(
     style="margin-left: 15px;"
     @dragover="$emit('setTargetList', listIndex)"
   )
     list-name-form(
-      @submitListName="" 
-      :name="list.name" 
-      :listIndex="listIndex" 
+      @submit="" 
+      :list="list"
+      :listIndex="listIndex"
     )
+      
 </template>
 
 <script>
-import ListNameForm from "./ListNameForm";
 import { mapMutations } from "vuex";
+import ListNameForm from './ListNameForm';
 export default {
   components: {
     ListNameForm
   },
   props: {
-    lists: {
-      type: Array,
+    list: {
       required: true
     }
   },
   methods: {
-    ...mapMutations(['changeListName']),
+    ...mapMutations(["changeListName"]),
     changeName(listName, listIndex) {
       this.changeListName({
-        listName, listIndex
+        listName,
+        listIndex
       });
     }
   }

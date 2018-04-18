@@ -20,7 +20,8 @@ export default {
   },
   methods: {
     ...mapMutations(['addList', 'addTodo']),
-  }
+    
+  },
 };
 </script>
 
