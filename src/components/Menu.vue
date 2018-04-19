@@ -1,5 +1,5 @@
 <template lang="pug">
-  .column.is-one-fifth
+  .column.is-one-fifth(style="margin: 10px;")
     aside.menu
       p.menu-label Boards
       ul.menu-list

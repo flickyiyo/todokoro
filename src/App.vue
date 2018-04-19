@@ -1,8 +1,8 @@
 <template lang="pug" >
 div
   navbar
-  .container
-    router-view 
+  div
+    router-view
 </template>
 
 <script>

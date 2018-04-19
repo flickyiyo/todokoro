@@ -14,6 +14,9 @@ const store = new Vuex.Store({
       const { listIndex, listName } = payload;
       state.lists[listIndex].name = listName;
     },
+    deleteList(state, payload) {
+      delete state.lists[payload];
+    },
     hideNewItemForm(state) {
       state.editingItem = undefined;
       state.editingList = undefined;
